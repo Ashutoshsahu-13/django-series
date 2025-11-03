@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from .models import chaivarity
+from .models import chaivarity,store
 from django.shortcuts import get_list_or_404
+from .forms import ChaivarityForm
 # Create your views here.
 def all_chai(request):
     chais=chaivarity.objects.all()
@@ -9,4 +10,15 @@ def all_chai(request):
 def chai_detail(request,chai_id):
     chai=get_list_or_404(chaivarity,pk=chai_id)
     return render(request,'chai/chai_detail.html',{'chai':chai})
+
+def chai_store_view(request):
+    stores=None
+    if request.method == 'POST':
+        form=ChaivarityForm(request.POST)
+        if form.is_valid():
+            chai_variety=form.cleaned_data['chai_varity']
+            stores=store.objects.filter(chai_varity=chai_variety)
+    else:
+        form=ChaivarityForm()
+    return render(request,'chai/chai_stores.html',{'stores':stores,'form':form})
     
